@@ -839,6 +839,36 @@ pub struct RecordArgs {
     #[arg(long, default_value_t = false)]
     pub encrypt_secrets: bool,
 
+    /// Record which Wi-Fi network this machine is on, into `place_samples`, so a
+    /// captured frame can later be told apart by *where* it happened. Off by default.
+    ///
+    /// Reads the SSID/BSSID of the associated network via CoreWLAN — never a
+    /// coordinate. macOS gates those values behind location permission, so the app
+    /// bundle needs `NSLocationWhenInUseUsageDescription` and a user grant; without
+    /// them the sampler simply records nothing rather than guessing. Notably it also
+    /// records nothing on Ethernet-only machines, which is deliberate: CoreLocation
+    /// would fall back to IP geolocation there and report a confident, well-formed
+    /// position that is wrong by hundreds of kilometres behind a VPN.
+    ///
+    /// Rows are written on network change plus a liveness heartbeat, not per tick.
+    #[arg(long, default_value_t = false)]
+    pub enable_place_sampling: bool,
+
+    /// How often the place sampler looks, in seconds. Ignored unless
+    /// `--enable-place-sampling` is set. Looking is a cheap local radio query and
+    /// does not by itself write a row.
+    #[arg(long, default_value_t = 60)]
+    pub place_sampling_interval_secs: u64,
+
+    /// How long the place sampler may go without writing before it rewrites the
+    /// current place unchanged, in seconds. Ignored unless `--enable-place-sampling`
+    /// is set.
+    ///
+    /// This is what separates "still in the same place" from "sampler stopped": with
+    /// no heartbeat, a stale newest row means both, and the reader cannot tell which.
+    #[arg(long, default_value_t = 900)]
+    pub place_sampling_heartbeat_secs: u64,
+
     /// Local data retention in days. Old screen/audio data is auto-deleted after this period.
     /// Disabled by default (0 = keep data forever); set a positive number of days to opt in.
     /// CLI deployments must never silently delete data — the desktop app opts new users in

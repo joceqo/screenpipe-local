@@ -967,6 +967,22 @@ async fn main() -> anyhow::Result<()> {
     // accessibility transitions and confirms restorations across all three.
     let _permission_monitor_handle = screenpipe_engine::permission_monitor::start();
 
+    // Start the place sampler if enabled — records which Wi-Fi network this
+    // machine is on, so a frame can later be told apart by where it happened.
+    // Opt-in: it needs location permission on macOS, and asking for it without
+    // the user having chosen the feature would be a permission prompt nobody
+    // requested.
+    let _place_sampler_handle = if record_args.enable_place_sampling {
+        let mut config = screenpipe_engine::place_sampler::SamplerConfig::new(
+            screenpipe_core::sync::get_or_create_machine_id(),
+        );
+        config.interval = Duration::from_secs(record_args.place_sampling_interval_secs.max(1));
+        config.heartbeat = Duration::from_secs(record_args.place_sampling_heartbeat_secs.max(1));
+        Some(screenpipe_engine::place_sampler::start(db.clone(), config))
+    } else {
+        None
+    };
+
     // Start cloud sync service if enabled
     let sync_service_handle = if record_args.enable_sync {
         match start_sync_service(&record_args, db.clone()).await {

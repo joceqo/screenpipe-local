@@ -31,8 +31,9 @@ use crate::{
     AudioChunkProcessingSnapshot, AudioChunksResponse, AudioDevice, AudioEntry, AudioResult,
     AudioResultRaw, ChunkOutcome, ContentType, DeviceType, Element, ElementRow, ElementSource,
     FrameData, FrameRow, FrameRowLight, FrameWindowData, InsertUiEvent, MeetingRecord,
-    MeetingTranscriptSegment, MemoryRecord, MemorySyncRow, NewDiarizationSegment, OCREntry,
-    OCRResult, OCRResultRaw, OcrEngine, OcrTextBlock, Order, ReplacementAudioTranscription,
+    MeetingTranscriptSegment, MemoryRecord, MemorySyncRow, NewDiarizationSegment, NewPlaceSample,
+    OCREntry, OCRResult, OCRResultRaw, OcrEngine, OcrTextBlock, Order, PlaceSample,
+    ReplacementAudioTranscription,
     SearchMatch, SearchMatchGroup, SearchResult, Speaker, TagAutocompleteItem, TagContentType,
     TextBounds, TextPosition, TimeSeriesChunk, UiContent, UiEventRecord, UiEventRow, VideoMetadata,
     MAX_TRANSCRIPTION_ATTEMPTS,
@@ -457,6 +458,7 @@ mod maintenance;
 mod meetings;
 mod memories;
 mod outputs;
+mod place_samples;
 mod search;
 mod semantic;
 mod setup;

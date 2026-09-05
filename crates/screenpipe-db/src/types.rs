@@ -379,6 +379,37 @@ pub struct MemoryRecord {
     pub updated_at: String,
 }
 
+/// Where this machine was at one instant, by network identity rather than by
+/// coordinate. See the `place_samples` migration for why coordinates are absent.
+///
+/// `bssid` — not `ssid` — is the comparison key: an access point keeps its MAC
+/// across a network rename, and two different places can share a network name.
+#[derive(OaSchema, Debug, Serialize, Deserialize, FromRow, Clone)]
+pub struct PlaceSample {
+    pub id: i64,
+    pub sampled_at: DateTime<Utc>,
+    /// Producer that observed this row, e.g. `wifi`. Readers branch on this
+    /// instead of inferring from which columns happen to be populated.
+    pub source: String,
+    pub ssid: Option<String>,
+    pub bssid: Option<String>,
+    /// 0.0..1.0. A sample may be uncertain, but never silently so.
+    pub confidence: f64,
+    pub device_name: String,
+    pub created_at: DateTime<Utc>,
+}
+
+/// A place observation on its way to the database, before it has an id.
+#[derive(Debug, Clone)]
+pub struct NewPlaceSample {
+    pub sampled_at: DateTime<Utc>,
+    pub source: String,
+    pub ssid: Option<String>,
+    pub bssid: Option<String>,
+    pub confidence: f64,
+    pub device_name: String,
+}
+
 /// Human feedback attached to any AI-produced or user-visible object.
 ///
 /// `target_kind` is intentionally open (notification, chat, memory, block,
