@@ -24,6 +24,14 @@
          this key macOS denies the request silently and never shows a prompt. -->
     <key>NSAppleEventsUsageDescription</key>
     <string>screenpipe reads the active tab URL from your browser so captured screens are linked to the page you were on. Your browsing data stays on-device.</string>
+    <!-- Required by the place sampler (`place_sampler.rs`, opt-in via
+         --enable-place-sampling). macOS gates CoreWLAN's ssid/bssid accessors
+         behind location authorization even though no coordinate is ever read or
+         stored: without this key those accessors return nil, no prompt is shown,
+         and the sampler records nothing at all. Wording says network rather than
+         location on purpose — the network name is genuinely all that is kept. -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>screenpipe records the name of the Wi-Fi network you are on, so your captured activity can be grouped by place. macOS requires location access to reveal the network name. No coordinates are ever read or stored, and this stays on-device.</string>
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsLocalNetworking</key>

@@ -78,6 +78,7 @@ pub mod pipe_permissions_middleware;
 pub mod pipe_store;
 pub mod pipe_stream;
 pub mod pipes_api;
+pub mod place_sampler;
 pub mod power;
 pub mod privacy_filter;
 pub mod process_priority;
